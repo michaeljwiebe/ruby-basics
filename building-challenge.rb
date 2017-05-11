@@ -17,28 +17,77 @@
 # After all of this is complete, tenants should be able to pay their rent through the app. 
 # All of this should happen through a terminal interface.
 
+require './apply.rb'
 
+class Development
+	attr_reader :single_incomes, :double_incomes, :triple_incomes, :floor_availability, :floors
 
-class Availability 
-	attr_reader :single_incomes, :double_incomes, :triple_incomes, :floor_availability
-
-	def initialize
+	def initialize floors
+		@floors = floors
 		@single_incomes = [36000, 42000, 48000, 54000, 60000, 66000, 72000]
 		@double_incomes = [44000, 50000, 56000, 62000, 68000, 74000, 80000]
 		@triple_incomes = [56000, 62000, 68000, 74000, 80000]
 		@floor_availability = ["2", "2 and 3", "2-4", "2-5", "2-6", "2-7", "2-8"]
+		@units = []
 	end
 end
 
-class Apartment
-  attr_reader :bedrooms, :rate
-  def initialize (bedrooms)
-    @bedrooms = bedrooms
-    @rate = 700 + 300*bedrooms
-  end
+class Floor #5-6 units possible per floor
+	attr_reader :units
+
+	def initialize units
+		@units = units
+		
+	end
 end
 
-class Customer
+class Space
+	attr_reader :unit_count
+	def initialize
+		@unit_count = 1
+		
+	end
+end
+
+class Apartment < Space
+	attr_reader :bedrooms, :rate
+	def initialize (bedrooms, floor)
+		@bedrooms = bedrooms
+		@floor = floor
+		@rate = calc_rate
+
+	end
+
+	def calc_rate
+		base_rate = 700
+		room_premium = 300 * @bedrooms
+		floor_premium = 30 * @floor
+		base_rate + room_premium + floor_premium
+	end
+end
+
+class Condo < Space
+	def initialize
+		@bedrooms = 2
+		
+	end
+end
+
+class Commercial < Space
+	def initialize
+		@unit_count = 1
+
+	end
+end
+
+class Restaurant < Commercial
+	def initialize
+		@unit_count = 2
+	end
+end
+
+
+class Tenant
 	attr_reader :name, :interest, :income, :type, :rooms_req, :development
 
 	def initialize
@@ -53,7 +102,7 @@ class Customer
 		# 		@rooms_req = 2
 		# 	end
 		# end
-		# puts "Are you a student, a residential customer, or a commercial customer? Enter student, residential or commercial"
+		# puts "Are you a student, a residential tenant, or a commercial customer? Enter student, residential or commercial"
 		# type = gets
 		# puts "How many rooms do you want to have in your apartment?"
 		# rooms_req = gets
@@ -115,15 +164,15 @@ class Customer
 		elsif @type == "commercial"
 		  puts "Are you interested in renting space for a restaurant? Enter yes or no"
 		  restaurant = gets.chomp
-		  if restaurant == "yes"
-		    puts "there are 2 restaurant spaces available for 5000 per month each. Do you want to sign for one of them? Enter yes or no"
-		    rent_rest = gets.chomp
-		    if rent_rest == "yes"
-		      development.commercial -= 2
-		    else
-		      goodbye()
-		  end
-		    
+			if restaurant == "yes"
+		    	puts "there are 2 restaurant spaces available for 5000 per month each. Do you want to sign for one of them? Enter yes or no"
+		    	rent_rest = gets.chomp
+				if rent_rest == "yes"
+		    		development.commercial -= 2
+				else
+		    		goodbye()
+		    	end
+			end
 		end
 	end
 	
@@ -164,11 +213,13 @@ class Customer
 	end
 end
 
-development = Availability.new
+development = Development.new(10)
 
-new_renter = Customer.new
+new_space = Apartment.new(2,3)
 
-new_renter.apply(development)
+new_renter = Tenant.new
+
+# new_renter.apply(development)
 
 
 
