@@ -1,13 +1,8 @@
 
 
 class Calculator
-	attr_reader :add, :subtract, :multiply, :divide
 
 	def initialize
-		@add = add
-		@subtract = subtract
-		@multiply = multiply
-		@divide = divide
 	end
 
 	def add (value1, value2)
@@ -27,7 +22,11 @@ class Calculator
 	end
 end
 
-calc = Calculator.new() # why does this throw an error asking for 2 inputs? I don't understand
+calc = Calculator.new()
+p calc.add(3,5)
+p calc.subtract(3,5)
+p calc.multiply(3,5)
+p calc.divide(3,5)
 
 
 
