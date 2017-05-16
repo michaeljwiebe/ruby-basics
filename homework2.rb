@@ -76,10 +76,10 @@ end
 
 elevator = Elevator.new(1)
 
-# elevator.go_up
-# elevator.go_up
-# elevator.go_up
-# elevator.go_down
+elevator.go_up
+elevator.go_up
+elevator.go_up
+elevator.go_down
 
 
 
